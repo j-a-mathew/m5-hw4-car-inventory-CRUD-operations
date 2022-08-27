@@ -48,3 +48,30 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'User {self.first_name} {self.last_name} has been added to the database'
+
+class Car(db.Model):
+    id = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    year = db.Column(db.Integer)
+    mileage = db.Column(db.Integer)
+    user_token = db.Column(db.String, db.ForeignKey('user.token'), nullable=False)
+
+    def __init__(self, name, year, mileage, user_token, id=''):
+        self.id = self.set_id()
+        self.name = name
+        self.year = year
+        self.mileage = mileage
+        self.user_token = user_token
+
+    def __repr__(self):
+        return f'The following car has been added to the inventory: {self.name}'
+
+    def set_id(self):
+        return (secrets.token_urlsafe())
+
+class CarSchema(ma.Schema):
+    class Meta:
+        fields = ['id', 'name', 'year', 'mileage']
+
+car_schema = CarSchema()
+cars_schema = CarSchema(many=True)
